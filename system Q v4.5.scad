@@ -103,7 +103,7 @@ white = "red";
 
 // going with a scale of 1cm to 1ft, so as it's 9ft wide, it's 90mm wide
 // this is the INSIDE measurement - the flange for the glass is outside this
-width = 90;
+width = 96; // increased width for full-size pi compatibility
 height = 90;
 depth = 85;
 
@@ -131,20 +131,27 @@ lid_height = 5;
 // size of hole for wire in top box
 wire_hole = 5;
 
-// how thick to make the internal box walls
-box_walls = 1.5;
+// how thick to make the internal box walls£
+box_walls = 1.0;
 
 // how thick is the half inch thick plate glass?
 glass_thickness = 1;
 
 // how thin to make the little outside lip of the base?
 edge_delta = 0.5;
- 
- 
+
+// display cutout
+display_height = 40; 
+display_width = 70;
  
 // here we go....  
 
 back_box_width = width - 2*inside_gap;
+
+mount_outer = 2;
+mount_outer_base = 5; // wider base of mount for better printablility
+mount_inner = 1.1; // 2mm for 3M screws
+mount_height = 5;
 
 color(black) {
     
@@ -171,7 +178,7 @@ if (base) {
 
 
 // base lid
-if (base_lid) {    
+if (base_lid) {
         difference() {
             union() {
                 // lid panel
@@ -206,10 +213,15 @@ if (base_lid) {
         // make the hole for a cable to come in
         if (wiring) {
             // hole right through the base for micro USB plug to go through
-            translate([inside_gap+mink_radius + back_box_width - 15, 
+            translate([inside_gap+mink_radius + back_box_width - 18, 
                         inside_gap + (25+15) + mink_radius + back_box_depth - 15,
                         0]) 
+            hull() {
+                translate([0,-13,0]) {
+                    cylinder(d=15, h=base_height, $fn=100);
+                }
                 cylinder(d=15, h=base_height, $fn=100);
+            }
  
         } // wiring
         
@@ -221,7 +233,7 @@ if (base_lid) {
 if (back_box) {
 
   translate([inside_gap+mink_radius, inside_gap + 25+15 + mink_radius, base_height + d2]) {
- 
+         
     difference() {
         minkowski() {
             cube([back_box_width-2*mink_radius, back_box_depth-2*mink_radius, back_box_height]);
@@ -233,6 +245,10 @@ if (back_box) {
                     back_box_depth-2*mink_radius - 2*box_walls, 
                     back_box_height+0.1]);
                 cylinder(r=mink_radius, h=0.0001, $fn=100);
+            }
+        // cut-out for display
+        translate([width/2-inside_gap-mink_radius, 30, 30]) {
+            cube([display_width,10,display_height], true);
         }
     }
     
@@ -261,7 +277,40 @@ if (back_box) {
             2*mink_radius + tolerance, box_walls + 5+0.1]);
         }
     }
-
+     translate([20,back_box_depth+9, 12]) {
+         translate([0,0,0]) {
+             rotate([90,0,0]) {
+                 difference() {
+                    cylinder(  mount_height,   mount_outer, mount_outer_base,true);
+                     cylinder(  mount_height,   mount_inner, mount_inner,true);
+                }
+             }
+         }
+         translate([59,0,0]) {
+             rotate([90,0,0]) {
+                 difference() {
+                    cylinder(  mount_height,   mount_outer, mount_outer_base,true);
+                     cylinder(  mount_height,   mount_inner, mount_inner,true);
+                }
+             }
+         }
+         translate([0,0,49]) {
+             rotate([90,0,0]) {
+                 difference() {
+                    cylinder(  mount_height,   mount_outer, mount_outer_base,true);
+                     cylinder(  mount_height,   mount_inner, mount_inner,true);
+                }
+             }
+         }
+         translate([59,0,49]) {
+             rotate([90,0,0]) {
+                 difference() {
+                    cylinder(  mount_height,   mount_outer, mount_outer_base,true);
+                     cylinder(  mount_height,   mount_inner, mount_inner,true);
+                }
+             }
+         }
+     }
 }
 
 // top box
