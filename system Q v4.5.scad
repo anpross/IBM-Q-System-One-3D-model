@@ -113,7 +113,7 @@ mink_radius = 3;
 
 // things that fit inside each other (e.g. diffuser inside top box)
 // i.e. 0.5 mm total if you allow this each side (i.e. 2*)
-tolerance = 0.25;
+tolerance = 0.20;
 
 base_height = 6;
 // make the back box a little bit lower just to allow for joint tolerances and stuff
@@ -150,7 +150,7 @@ back_box_width = width - 2*inside_gap;
 
 mount_outer = 3;
 mount_outer_base = 6; // wider base of mount for better printablility
-mount_inner = 2; // 2mm for 3M screws
+mount_inner = 1.8; // 2mm for 3M screws
 mount_height = 5;
 
 color(black) {
@@ -171,7 +171,7 @@ if (base) {
         // make the hole for the cable to come in
         if (wiring)
             translate([width - 7, depth -1, box_walls-extra_base])
-                #cube([4.5,1+glass_thickness,base_height-box_walls-1+extra_base]);
+                #cube([4.5,1+glass_thickness,base_height-box_walls-1+1]);
         
     }  
 }
@@ -217,9 +217,10 @@ if (base_lid) {
                         inside_gap + (25+15) + mink_radius + back_box_depth - 15,
                         0]) 
             hull() {
-                translate([-1,0,0]) {
+                translate([-2,0,0]) {
                     translate([0,-13,0]) {
-                    cylinder(d=15, h=base_height, $fn=100);
+                        cube([15,15,100], true);
+//                    cylinder(d=15, h=base_height, $fn=100);
                 }
                 cylinder(d=15, h=base_height, $fn=100);
                 }
